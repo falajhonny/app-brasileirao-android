@@ -20,7 +20,7 @@ func GetArtilheiros(c *gin.Context) {
 		return
 	}
 
-	utils.SetToCache("artilheiros", data, 5)
+	utils.SetToCache("artilheiros", data, 10)
 
 	c.JSON(http.StatusOK, data)
 }
