@@ -20,7 +20,7 @@ func GetClassificacao(c *gin.Context) {
 		return
 	}
 
-	utils.SetToCache("classificacao", data, 5)
+	utils.SetToCache("classificacao", data, 10)
 
 	c.JSON(http.StatusOK, data)
 }

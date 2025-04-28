@@ -5,8 +5,17 @@ body {
     background-color: #f5f5f5;
     color: #333;
     overflow-x: hidden; /* ESSENCIAL: impede rolagem lateral */
+    overflow: hidden; /* Impede rolagem no body */
+    height: 100%;
   }
   
+  html, #root {
+    height: 100%;
+    margin: 0;
+    overflow: hidden; /* Impede rolagem no body */
+    padding: 0;
+  }
+
   nav {
     background: rgba(34, 139, 34, 0.7); /* verde escuro translúcido (tipo 'Forest Green') */
     padding: 12px;
@@ -67,7 +76,7 @@ body {
   }
   
   table th, table td {
-    padding: 10px;
+    padding: 08px;
     border: 1px solid #ccc;
     text-align: center;
     font-size: 14px;
@@ -111,7 +120,7 @@ body {
   }
   
   div {
-    min-height: 80vh;
+    min-height: 55vh;
   }
   body {
     background-image: url('./assets/gramado.PNG');
@@ -135,18 +144,28 @@ body {
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 20px;
-    padding: 20px 30px;
+    padding: 15px 20px;
     color: #fff;
     font-size: 18px;
     font-weight: bold;
     text-decoration: none;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
+    width: 90%; /* Botão responsivo */
+    max-width: 300px; /* Limite máximo de tamanho */
+    display: flex;
+    margin: 20px auto; /* Centraliza e dá espaço */
+    box-sizing: border-box;
   }
   
   .home-button:hover {
     background: rgba(255, 255, 255, 0.3);
     transform: translateY(-5px);
+  }
+
+  .home-button:active {
+    transform: scale(0.96);
+    background: rgba(255, 255, 255, 0.25);
   }
   
   /* Animação de entrada */
@@ -166,11 +185,54 @@ body {
   }
   
   .loading-spinner {
-    margin: 20px auto;
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #007bff;
+    margin: 40px auto;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #007bff;
     border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    animation: spin 1s linear infinite;
+    width: 40px;
+    height: 40px;
+    animation: spin 0.8s linear infinite;
   }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* CSS global */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+.bottom-nav-link {
+  text-decoration: none;
+  color: #333;
+  font-size: 24px;
+  transition: transform 0.2s ease, color 0.3s ease, background 0.3s ease;
+  border-radius: 50%;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ao tocar ou clicar */
+.bottom-nav-link:active {
+  transform: scale(0.85);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Ícone ativo */
+.bottom-nav-link.active {
+  color: #28a745; /* Verde */
+  font-size: 28px;
+  background: rgba(40, 167, 69, 0.1);
+}

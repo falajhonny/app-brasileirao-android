@@ -37,12 +37,30 @@ func GetJogosPorRodada(c *gin.Context) {
 		return
 	}
 
-	data, err := services.Buscar("campeonatos/14/rodadas/" + rodadaID)
+	// Busca a rodada completa
+	responseData, err := services.Buscar("campeonatos/14/rodadas/" + rodadaID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"erro": err.Error()})
 		return
 	}
 
-	utils.SetToCache(cacheKey, data, 5) // 5 minutos de cache
-	c.JSON(http.StatusOK, data)
+	// Transformar a resposta genérica em mapa
+	mapData, ok := responseData.(map[string]interface{})
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Formato inesperado da resposta"})
+		return
+	}
+
+	// Pega somente o campo "partidas"
+	partidas, found := mapData["partidas"]
+	if !found {
+		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Partidas não encontradas"})
+		return
+	}
+
+	// Cacheia só as partidas
+	utils.SetToCache(cacheKey, partidas, 10)
+
+	// Responde apenas as partidas
+	c.JSON(http.StatusOK, partidas)
 }

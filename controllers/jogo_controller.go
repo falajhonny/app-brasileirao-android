@@ -23,7 +23,7 @@ func GetJogosPorRodadaHandler(c *gin.Context) {
 		return
 	}
 
-	utils.SetToCache(cacheKey, data, 5)
+	utils.SetToCache(cacheKey, data, 10)
 
 	c.JSON(http.StatusOK, data)
 }
