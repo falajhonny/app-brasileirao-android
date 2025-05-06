@@ -13,5 +13,6 @@ func RegisterRoutes(router *gin.Engine) {
 		api.GET("/jogos/:rodada", controllers.GetJogosPorRodada)
 		api.GET("/classificacao", controllers.GetClassificacao)
 		api.GET("/artilheiros", controllers.GetArtilheiros)
+		api.POST("/atualizar-dados", controllers.AtualizarDados) // NOVO
 	}
 }

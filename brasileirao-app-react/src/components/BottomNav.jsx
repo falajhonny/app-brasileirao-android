@@ -6,9 +6,9 @@ function BottomNav() {
 
   const navItems = [
     { to: '/', icon: <FaHome />, label: 'Home' },
-    { to: '/rodadas', icon: <FaFutbol />, label: 'Rodadas' },
+    { to: '/rodadas', icon: <FaStar />, label: 'Rodadas' },
     { to: '/classificacao', icon: <FaListOl />, label: 'Classificação' },
-    { to: '/artilheiros', icon: <FaStar />, label: 'Artilheiros' },
+    { to: '/artilheiros', icon: <FaFutbol />, label: 'Artilheiros' },
     { to: '/meu-time', icon: <FaUser />, label: 'Meu Time' }
   ];
 
