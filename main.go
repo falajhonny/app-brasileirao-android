@@ -1,12 +1,15 @@
 package main
 
 import (
+	"api-brasileirao/database"
 	"api-brasileirao/routes"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	database.Connect()
 	router := gin.Default()
 
 	// Configuração CORS

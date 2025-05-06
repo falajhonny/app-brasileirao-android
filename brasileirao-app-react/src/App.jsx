@@ -4,7 +4,7 @@ import Artilheiros from './pages/Artilheiros';
 import Rodadas from './pages/Rodadas';
 import Classificacao from './pages/Classificacao';
 import MeuTime from './pages/MeuTime';
-import logoSerieB from './assets/logo-serie-b.png'; // Importando o logo
+import logoSerieB from './assets/logo-serie-b.png';
 import BottomNav from './components/BottomNav';
 
 function App() {

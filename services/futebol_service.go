@@ -22,17 +22,13 @@ func Buscar(endpoint string) (interface{}, error) {
 	}
 	defer resp.Body.Close()
 
-	// >>> Tratamento de Rate Limit
 	if resp.StatusCode == 429 {
 		return nil, errors.New("limite de requisições atingido, tente novamente em alguns minutos")
 	}
-	// <<<
 
-	// >>> Tratamento para outros erros (não 200)
 	if resp.StatusCode != 200 {
 		return nil, fmt.Errorf("erro ao buscar dados: status %d", resp.StatusCode)
 	}
-	// <<<
 
 	body, _ := io.ReadAll(resp.Body)
 
