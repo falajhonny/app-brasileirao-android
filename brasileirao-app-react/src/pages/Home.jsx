@@ -4,7 +4,6 @@ function Home() {
   return (
     <div style={{
       height: 'calc(100dvh - 70px)', // altura total da tela - BottomNav
-      display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
@@ -12,8 +11,6 @@ function Home() {
       padding: '20px',
       boxSizing: 'border-box',
       overflow: 'hidden',
-      maxWidth: '900px',
-      margin: '0 auto',
     }}>
       <h2 style={{ color: '#fff', marginBottom: '20px' }}>Bem-vindo ao Brasileirão Série B</h2>
 

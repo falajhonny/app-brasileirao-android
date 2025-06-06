@@ -9,6 +9,16 @@ import (
 )
 
 func GetArtilheiros(c *gin.Context) {
+	// TODO: Remover comentários e implementar quando for testar
+	/*
+	// Primeiro tenta buscar do banco de dados
+	artilheiros, err := database.BuscarArtilheirosDB()
+	if err == nil {
+		c.JSON(http.StatusOK, artilheiros)
+		return
+	}
+	*/
+
 	if data, found := utils.GetFromCache("artilheiros"); found {
 		c.JSON(http.StatusOK, data)
 		return

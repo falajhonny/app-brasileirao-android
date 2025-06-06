@@ -36,16 +36,18 @@ function Classificacao() {
       paddingBottom: '80px',
       minHeight: '100vh',
       boxSizing: 'border-box',
+      position: 'relative',
     }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#fff' }}>Classificação - Série B</h2>
 
       <div style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.6)',
         borderRadius: '15px',
         padding: '20px',
         boxShadow: '0px 4px 12px rgba(0,0,0,0.2)',
-        maxHeight: 'calc(100vh - 220px)',
+        height: 'calc(80vh - 180px)',
         overflowY: 'auto',
+        position: 'relative',
       }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
           <thead>

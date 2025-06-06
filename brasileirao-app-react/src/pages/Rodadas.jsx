@@ -6,12 +6,16 @@ function Rodadas() {
   const [rodadas, setRodadas] = useState([]);
   const [jogosRodada, setJogosRodada] = useState({});
   const [loading, setLoading] = useState(true);
+  const [currentRodada, setCurrentRodada] = useState(1);
 
   useEffect(() => {
     axios.get('http://localhost:8080/api/rodadas')
       .then(response => {
+        console.log('Dados das rodadas:', response.data);
         setRodadas(response.data);
         setLoading(false);
+        // Busca os jogos da rodada atual ao carregar a página
+        buscarJogos(1);
       })
       .catch(error => {
         console.error('Erro ao buscar rodadas:', error);
@@ -24,13 +28,41 @@ function Rodadas() {
       return; // já buscou antes
     }
 
+    console.log('Buscando jogos da rodada:', rodada);
     axios.get(`http://localhost:8080/api/jogos/${rodada}`)
       .then(response => {
-        setJogosRodada(prev => ({ ...prev, [rodada]: response.data || [] }));
+        console.log('Resposta da API:', response.data);
+        // Processa a estrutura de dados da API
+        const partidas = response.data?.partidas?.partidas?.['primeira-fase'];
+        console.log('Partidas extraídas:', partidas);
+        
+        if (partidas) {
+          const jogos = Object.values(partidas).map(chave => chave.ida);
+          console.log('Jogos processados:', jogos);
+          setJogosRodada(prev => ({ ...prev, [rodada]: jogos }));
+        } else {
+          console.log('Nenhuma partida encontrada na estrutura');
+          setJogosRodada(prev => ({ ...prev, [rodada]: [] }));
+        }
       })
       .catch(error => {
         console.error('Erro ao buscar jogos da rodada:', error);
+        setJogosRodada(prev => ({ ...prev, [rodada]: [] }));
       });
+  };
+
+  const handlePrevRodada = () => {
+    if (currentRodada > 1) {
+      setCurrentRodada(currentRodada - 1);
+      buscarJogos(currentRodada - 1);
+    }
+  };
+
+  const handleNextRodada = () => {
+    if (currentRodada < rodadas.length) {
+      setCurrentRodada(currentRodada + 1);
+      buscarJogos(currentRodada + 1);
+    }
   };
 
   if (loading) {
@@ -42,82 +74,49 @@ function Rodadas() {
       padding: '10px',
       maxWidth: '900px',
       margin: '0 auto',
-      paddingBottom: '80px', // Espaço para BottomNav
-      maxHeight: 'calc(100vh - 220px', // Limite de altura
-
+      paddingBottom: '80px',
+      minHeight: '100vh',
+      boxSizing: 'border-box',
     }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#fff' }}>Rodadas do Campeonato</h2>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#fff' }}>Rodadas - Série B</h2>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <button onClick={handlePrevRodada} style={{ padding: '10px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px' }}>Rodada Anterior</button>
+        <button onClick={handleNextRodada} style={{ padding: '10px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '5px' }}>Próxima Rodada</button>
+      </div>
 
       <div style={{
-        backgroundColor: 'rgba(255,255,255,0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.6)',
         borderRadius: '15px',
         padding: '20px',
         boxShadow: '0px 4px 12px rgba(0,0,0,0.2)',
-        maxHeight: '400px',
+        maxHeight: 'calc(100vh - 83px)',
         overflowY: 'auto',
-        flex: 1,
-        marginBottom: '10px',
       }}>
-        {rodadas.map((rodada) => (
-          <div
-            key={rodada.rodada}
-            style={{
-              border: '1px solid #ccc',
-              borderRadius: '8px',
-              padding: '10px',
-              backgroundColor: '#fff',
-              boxShadow: '0px 2px 5px rgba(0,0,0,0.1)',
-              marginBottom: '20px'
-            }}
-          >
-            <h3
-              style={{ cursor: 'pointer', color: '#007bff' }}
-              onClick={() => buscarJogos(rodada.rodada)}
-            >
-              Rodada {rodada.rodada} ({rodada.status})
-            </h3>
-
-            {/* Exibe os jogos se já tiver buscado */}
-            {jogosRodada[rodada.rodada] && jogosRodada[rodada.rodada].length > 0 && (
-              <div style={{ marginTop: '10px' }}>
-                {/* Jogos Finalizados */}
-                <div>
-                  <h4 style={{ color: '#28a745' }}>Jogos Finalizados</h4>
-                  {jogosRodada[rodada.rodada]
-                    .filter(partida => partida.status === 'finalizado')
-                    .map(partida => (
-                      <div key={partida.partida_id} style={{
-                        padding: '8px',
-                        borderBottom: '1px solid #eee',
-                      }}>
-                        <strong>{partida.time_mandante.nome_popular}</strong> {partida.placar_mandante} x {partida.placar_visitante} <strong>{partida.time_visitante.nome_popular}</strong><br />
-                        <small>Status: {partida.status}</small>
-                      </div>
-                    ))
-                  }
-                </div>
-
-                {/* Próximos Jogos */}
-                <div style={{ marginTop: '15px' }}>
-                  <h4 style={{ color: '#ffc107' }}>Próximos Jogos</h4>
-                  {jogosRodada[rodada.rodada]
-                    .filter(partida => partida.status !== 'finalizado')
-                    .map(partida => (
-                      <div key={partida.partida_id} style={{
-                        padding: '8px',
-                        borderBottom: '1px solid #eee',
-                      }}>
-                        <strong>{partida.time_mandante.nome_popular}</strong> vs <strong>{partida.time_visitante.nome_popular}</strong><br />
-                        <small>Data: {partida.data_realizacao} {partida.hora_realizacao}</small><br />
-                        <small>Status: {partida.status}</small>
-                      </div>
-                    ))
-                  }
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
+        {jogosRodada[currentRodada] && jogosRodada[currentRodada].length > 0 ? (
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>Mandante</th>
+                <th style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>Data/Hora</th>
+                <th style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>Visitante</th>
+                <th style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {jogosRodada[currentRodada].map(partida => (
+                <tr key={partida.partida_id}>
+                  <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{partida.time_mandante.nome_popular}</td>
+                  <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{partida.data_realizacao} - {partida.hora_realizacao}</td>
+                  <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{partida.time_visitante.nome_popular}</td>
+                  <td style={{ padding: '10px', borderBottom: '1px solid #eee' }}>{partida.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>Nenhum jogo encontrado para esta rodada.</p>
+        )}
       </div>
     </div>
   );

@@ -9,6 +9,16 @@ import (
 )
 
 func GetRodadas(c *gin.Context) {
+	// TODO: Remover comentários e implementar quando for testar
+	/*
+		// Primeiro tenta buscar do banco de dados
+		rodadas, err := database.BuscarRodadasDB()
+		if err == nil {
+			c.JSON(http.StatusOK, rodadas)
+			return
+		}
+	*/
+
 	// Primeiro tenta pegar do cache
 	if data, found := utils.GetFromCache("rodadas"); found {
 		c.JSON(http.StatusOK, data)
@@ -30,6 +40,16 @@ func GetRodadas(c *gin.Context) {
 
 func GetJogosPorRodada(c *gin.Context) {
 	rodadaID := c.Param("rodada")
+
+	// TODO: Remover comentários e implementar quando for testar
+	/*
+		// Primeiro tenta buscar do banco de dados
+		partidas, err := database.BuscarPartidasPorRodadaDB(rodadaID)
+		if err == nil {
+			c.JSON(http.StatusOK, partidas)
+			return
+		}
+	*/
 
 	cacheKey := "jogos_rodada_" + rodadaID
 	if data, found := utils.GetFromCache(cacheKey); found {

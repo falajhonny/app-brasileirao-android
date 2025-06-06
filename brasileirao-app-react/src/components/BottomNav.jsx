@@ -15,19 +15,18 @@ function BottomNav() {
   return (
     <nav style={{
       position: 'fixed',
-      bottom: 0,
-      left: 8,
-      right: 8,
+      bottom: 10,
+      left: 10,
+      right: 10,
       zIndex: 9999,
-      height: '60px',
       background: 'rgba(255, 255, 255, 0.8)',
-      backdropFilter: 'blur(10px)',
+      padding: '12px',
       display: 'flex',
       justifyContent: 'space-around',
       alignItems: 'center',
-      boxShadow: '0px -2px 10px rgba(0,0,0,0.2)',
+      backdropFilter: 'blur(10px)',
+      boxShadow: '0 -2px 10px rgba(0,0,0,0.2)',
       borderRadius: '20px',
-      overflow: 'hidden',
     }}>
       {navItems.map((item, index) => {
         const isActive = location.pathname === item.to;

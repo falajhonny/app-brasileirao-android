@@ -85,6 +85,7 @@ func BuscarRodadaCompleta(rodada int) ([]Partida, error) {
 }
 
 func SalvarArtilheiros(data interface{}) {
+	log.Printf("[Artilheiros] Recebido: %+v", data)
 	tx, err := DB.Begin()
 	if err != nil {
 		log.Println("Erro ao iniciar transação de artilheiros:", err)
@@ -174,7 +175,7 @@ func SalvarArtilheiros(data interface{}) {
 			int(timeID),
 			timeNome,
 			int(gols),
-			0, 
+			0,
 		)
 		if err != nil {
 			log.Printf("Erro ao executar INSERT para atleta %s: %v", atletaNome, err)
@@ -189,6 +190,8 @@ func SalvarArtilheiros(data interface{}) {
 }
 
 func SalvarTodasPartidas(data interface{}) {
+	log.Printf("[Partidas] Recebido: %+v", data)
+
 	tx, err := DB.Begin()
 	if err != nil {
 		log.Println("[Partidas] Erro ao iniciar transação:", err)
@@ -228,59 +231,60 @@ func SalvarTodasPartidas(data interface{}) {
 		return
 	}
 
-	faseUnica, ok := partidasMap["fase-unica"].(map[string]interface{})
+	partidasInterno, ok := partidasMap["partidas"].(map[string]interface{})
 	if !ok {
-		log.Println("[Partidas] Erro: chave 'fase-unica' não é um mapa")
+		log.Println("[Partidas] Erro: chave 'partidas.partidas' não contém um objeto esperado")
+		_ = tx.Rollback()
+		return
+	}
+
+	primeiraFase, ok := partidasInterno["primeira-fase"].(map[string]interface{})
+	if !ok {
+		log.Println("[Partidas] Erro: chave 'primeira-fase' não é um mapa")
 		_ = tx.Rollback()
 		return
 	}
 
 	totalInseridas := 0
-
-	for rodadaKey, lista := range faseUnica {
-		rodada := extractRodadaFromKey(rodadaKey)
-
-		partidas, ok := lista.([]interface{})
+	for chave, valor := range primeiraFase {
+		chaveMap, ok := valor.(map[string]interface{})
 		if !ok {
-			log.Printf("[Partidas] Rodada %s possui formato inválido\n", rodadaKey)
+			log.Printf("[Partidas] %s não é um mapa", chave)
+			continue
+		}
+		ida, ok := chaveMap["ida"].(map[string]interface{})
+		if !ok {
+			log.Printf("[Partidas] %s não possui 'ida' como mapa", chave)
 			continue
 		}
 
-		for _, item := range partidas {
-			p, ok := item.(map[string]interface{})
-			if !ok {
-				log.Println("[Partidas] Partida com formato inválido")
-				continue
-			}
+		mandante := ida["time_mandante"].(map[string]interface{})
+		visitante := ida["time_visitante"].(map[string]interface{})
 
-			mandante := p["time_mandante"].(map[string]interface{})
-			visitante := p["time_visitante"].(map[string]interface{})
+		placarMandante := intFromInterface(ida["placar_mandante"])
+		placarVisitante := intFromInterface(ida["placar_visitante"])
+		data := strOrEmpty(ida["data_realizacao"])
+		hora := strOrEmpty(ida["hora_realizacao"])
+		status := strOrEmpty(ida["status"])
+		slug := strOrEmpty(ida["slug"])
 
-			placarMandante := intFromInterface(p["placar_mandante"])
-			placarVisitante := intFromInterface(p["placar_visitante"])
-			data := strOrEmpty(p["data_realizacao"])
-			hora := strOrEmpty(p["hora_realizacao"])
-			status := strOrEmpty(p["status"])
-			slug := strOrEmpty(p["slug"])
-
-			_, err := stmt.Exec(
-				int(p["partida_id"].(float64)),
-				rodada,
-				strOrEmpty(mandante["nome_popular"]),
-				strOrEmpty(visitante["nome_popular"]),
-				strOrEmpty(mandante["escudo"]),
-				strOrEmpty(visitante["escudo"]),
-				placarMandante,
-				placarVisitante,
-				data+" "+hora,
-				status,
-				slug,
-			)
-			if err != nil {
-				log.Printf("[Partidas] Erro ao inserir partida ID %v: %v", p["partida_id"], err)
-			} else {
-				totalInseridas++
-			}
+		_, err := stmt.Exec(
+			int(ida["partida_id"].(float64)),
+			0, // rodada não está presente nesse formato, pode ser ajustado se necessário
+			strOrEmpty(mandante["nome_popular"]),
+			strOrEmpty(visitante["nome_popular"]),
+			strOrEmpty(mandante["escudo"]),
+			strOrEmpty(visitante["escudo"]),
+			placarMandante,
+			placarVisitante,
+			data+" "+hora,
+			status,
+			slug,
+		)
+		if err != nil {
+			log.Printf("[Partidas] Erro ao inserir partida ID %v: %v", ida["partida_id"], err)
+		} else {
+			totalInseridas++
 		}
 	}
 
@@ -317,6 +321,7 @@ func intFromInterface(value interface{}) int {
 }
 
 func SalvarClassificacao(data interface{}) {
+	log.Printf("[Classificacao] Recebido: %+v", data)
 	tx, err := DB.Begin()
 	if err != nil {
 		log.Println("Erro ao iniciar transação de classificacao:", err)
@@ -373,6 +378,7 @@ func SalvarClassificacao(data interface{}) {
 }
 
 func SalvarRodadasComPartidas(data interface{}) {
+	log.Printf("[Rodadas] Recebido: %+v", data)
 	tx, err := DB.Begin()
 	if err != nil {
 		log.Println("Erro ao iniciar transação de rodadas:", err)

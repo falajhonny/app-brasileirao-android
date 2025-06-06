@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -31,6 +32,7 @@ func Buscar(endpoint string) (interface{}, error) {
 	}
 
 	body, _ := io.ReadAll(resp.Body)
+	log.Printf("[API Response] Body: %s", string(body))
 
 	var result interface{}
 	err = json.Unmarshal(body, &result)

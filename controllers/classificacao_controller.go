@@ -9,6 +9,16 @@ import (
 )
 
 func GetClassificacao(c *gin.Context) {
+	// TODO: Remover comentários e implementar quando for testar
+	/*
+	// Primeiro tenta buscar do banco de dados
+	classificacao, err := database.BuscarClassificacaoDB()
+	if err == nil {
+		c.JSON(http.StatusOK, classificacao)
+		return
+	}
+	*/
+
 	if data, found := utils.GetFromCache("classificacao"); found {
 		c.JSON(http.StatusOK, data)
 		return
